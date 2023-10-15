@@ -39,11 +39,22 @@ function AuthShowcase() {
     { enabled: sessionData?.user !== undefined }
   );
 
+  const { data: palmMessage } = api.example.getPalmStory.useQuery(
+    undefined, // no input
+    { enabled: sessionData?.user !== undefined }
+  );
+
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl text-white">
         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
         {secretMessage && <span> - {secretMessage}</span>}
+      </p>
+      <h1 className="text-center text-2xl text-white">
+        Palm Story
+      </h1>
+      <p className="text-center text-2xl text-white">
+        {palmMessage}
       </p>
       <button
         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"

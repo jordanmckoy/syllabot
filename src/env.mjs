@@ -22,6 +22,7 @@ const server = z.object({
   AUTH0_ISSUER: z.string(),
   AUTH0_CLIENT_SECRET: z.string(),
   AUTH0_CLIENT_ID: z.string(),
+  PALM_KEY: z.string(),
 });
 
 /**
@@ -46,6 +47,7 @@ const processEnv = {
   AUTH0_ISSUER: process.env.AUTH0_ISSUER,
   AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET,
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
+  PALM_KEY: process.env.PALM_KEY,
 };
 
 // Don't touch the part below
