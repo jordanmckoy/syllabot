@@ -24,7 +24,7 @@ export default function Index() {
 
     useEffect(() => {
         if (response.data) {
-            setQuestion(response.data as string);
+            setQuestion(response.data);
         }
     }, [response.data]);
 
