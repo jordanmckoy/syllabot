@@ -1,7 +1,7 @@
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { signOut, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { getServerAuthSession } from '~/server/auth';
 import { GetServerSidePropsContext } from 'next';
 
@@ -48,11 +48,6 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                                                     <a
                                                         key={item.name}
                                                         href={item.href}
-                                                        onClick={() => {
-                                                            if (item.name === 'Sign out') {
-                                                                signOut();
-                                                            }
-                                                        }}
                                                         className={classNames(
                                                             item.current
                                                                 ? 'bg-gray-900 text-white'

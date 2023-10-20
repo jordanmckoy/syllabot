@@ -1,7 +1,6 @@
 import {
   createTRPCRouter,
   protectedProcedure,
-  publicProcedure,
 } from "~/server/api/trpc";
 import { z } from "zod";
 import axios from 'axios';
@@ -22,7 +21,7 @@ interface GenerateTextResponse {
 }
 
 export const palmRouter = createTRPCRouter({
-  getPalmResponse: publicProcedure
+  getPalmResponse: protectedProcedure
     .input(z.object({ text: z.string() }))
     .query(async ({ input }) => {
       const apiUrl = `https://generativelanguage.googleapis.com/v1beta3/models/text-bison-001:generateText?key=${env.PALM_KEY}`;
@@ -50,11 +49,9 @@ export const palmRouter = createTRPCRouter({
 
         return output ?? "No response";
 
-      } catch (error: any) {
+      } catch (error) {
 
-        console.error("Error:", error);
-
-        return error.code;
+        return "Error"
       }
 
     }),

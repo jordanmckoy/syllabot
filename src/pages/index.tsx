@@ -24,13 +24,13 @@ export default function Index() {
 
     useEffect(() => {
         if (response.data) {
-            setQuestion(response.data);
+            setQuestion(response.data as string);
         }
     }, [response.data]);
 
     const handleTopicClick = (topic: string) => {
         setSelectedTopic(topic);
-        response.refetch();
+        void response.refetch();
     };
     return (
         <>
