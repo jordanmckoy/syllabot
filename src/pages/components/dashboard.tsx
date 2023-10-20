@@ -1,13 +1,10 @@
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { signOut, useSession } from 'next-auth/react';
+import { getServerAuthSession } from '~/server/auth';
+import { GetServerSidePropsContext } from 'next';
 
-const user = {
-    name: 'Tom Cook',
-    email: 'tom@example.com',
-    imageUrl:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-}
 const navigation = [
     { name: 'Dashboard', href: '#', current: true },
     { name: 'Team', href: '#', current: false },
@@ -26,6 +23,9 @@ function classNames(...classes: string[]) {
 }
 
 export default function Dashboard({ children }: { children: React.ReactNode }) {
+
+    const { data: sessionData } = useSession();
+
     return (
         <>
             <div className="min-h-full">
@@ -48,6 +48,11 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                                                     <a
                                                         key={item.name}
                                                         href={item.href}
+                                                        onClick={() => {
+                                                            if (item.name === 'Sign out') {
+                                                                signOut();
+                                                            }
+                                                        }}
                                                         className={classNames(
                                                             item.current
                                                                 ? 'bg-gray-900 text-white'
@@ -79,7 +84,11 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                                                     <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                                                         <span className="absolute -inset-1.5" />
                                                         <span className="sr-only">Open user menu</span>
-                                                        <img className="h-8 w-8 rounded-full" src={user.imageUrl} alt="" />
+                                                        {sessionData?.user.image &&
+                                                            (
+                                                                <img className="h-8 w-8 rounded-full" src={sessionData.user.image} alt="" />
+                                                            )
+                                                        }
                                                     </Menu.Button>
                                                 </div>
                                                 <Transition
@@ -147,11 +156,15 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                                 <div className="border-t border-gray-700 pb-3 pt-4">
                                     <div className="flex items-center px-5">
                                         <div className="flex-shrink-0">
-                                            <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
+                                            {sessionData?.user.image &&
+                                                (
+                                                    <img className="h-10 w-10 rounded-full" src={sessionData?.user.image} alt="" />
+                                                )
+                                            }
                                         </div>
                                         <div className="ml-3">
-                                            <div className="text-base font-medium leading-none text-white">{user.name}</div>
-                                            <div className="text-sm font-medium leading-none text-gray-400">{user.email}</div>
+                                            <div className="text-base font-medium leading-none text-white">{sessionData?.user.name}</div>
+                                            <div className="text-sm font-medium leading-none text-gray-400">{sessionData?.user.email}</div>
                                         </div>
                                         <button
                                             type="button"
@@ -192,3 +205,22 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
         </>
     )
 }
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+    const session = await getServerAuthSession(ctx);
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        }
+    }
+
+    return {
+        props: {
+            session: session
+        },
+    };
+};
