@@ -37,44 +37,39 @@ export const exampleRouter = createTRPCRouter({
   getSecretMessage: protectedProcedure.query(() => {
     return "you can now see this secret message!";
   }),
-  getPalmStory: protectedProcedure.query(() => {
-    return generateText();
+  getPalmStory: protectedProcedure.query(async () => {
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta3/models/text-bison-001:generateText?key=${env.PALM_KEY}`;
+
+    const requestData = {
+      prompt: {
+        text: "Write a story about a magic backpack"
+      }
+    };
+
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      const response = await axios.post(apiUrl, requestData, { headers });
+
+      const parsedResponse = response.data as GenerateTextResponse;
+
+      if (!parsedResponse.candidates) {
+        return "No candidates";
+      }
+
+      const output = parsedResponse.candidates[0]?.output;
+
+      console.log("Output:", output);
+
+      return output ?? "No response";
+
+    } catch (error: any) {
+
+      console.error("Error:", error);
+
+      return error.code;
+    }
   }),
 });
-
-
-
-async function generateText() {
-  const apiUrl = `https://generativelanguage.googleapis.com/v1beta3/models/text-bison-001:generateText?key=${env.PALM_KEY}`;
-  const requestData = {
-    prompt: {
-      text: "Write a story about a magic backpack"
-    }
-  };
-
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-
-  try {
-    const response = await axios.post(apiUrl, requestData, { headers });
-
-    const parsedResponse = response.data as GenerateTextResponse;
-
-    if (!parsedResponse.candidates) {
-      return "No candidates";
-    }
-
-    const output = parsedResponse.candidates[0]?.output;
-
-    console.log("Output:", output);
-
-    return output ?? "No response";
-
-  } catch (error: any) {
-
-    console.error("Error:", error);
-
-    return error.code;
-  }
-}
