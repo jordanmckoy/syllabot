@@ -3,6 +3,8 @@ import Dashboard from "./components/dashboard";
 import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import ReactMarkdown from 'react-markdown';
+import { GetServerSidePropsContext } from "next";
+import { getServerAuthSession } from "~/server/auth";
 
 const topics = [
     "The Importance of the Physical Database",
@@ -73,3 +75,22 @@ export default function Index() {
         </>
     )
 }
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+    const session = await getServerAuthSession(ctx);
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        }
+    }
+
+    return {
+        props: {
+            session: session
+        },
+    };
+};
