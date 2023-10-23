@@ -1,20 +1,12 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
     provider = "prisma-client-js"
 }
 
 datasource db {
     provider = "mysql"
-    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url      = env("DATABASE_URL")
 }
 
-// Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
     userId            String
@@ -31,6 +23,7 @@ model Account {
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
+    @@index([userId], map: "Account_userId_fkey")
 }
 
 model Session {
@@ -39,6 +32,8 @@ model Session {
     userId       String
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId], map: "Session_userId_fkey")
 }
 
 model User {
@@ -48,7 +43,7 @@ model User {
     emailVerified DateTime?
     password      String?
     image         String?
-    role          UserRole @default(USER)
+    role          UserRole  @default(USER)
     accounts      Account[]
     sessions      Session[]
 }
@@ -61,13 +56,27 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-model Subject {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Course {
+    id                Int    @id @default(autoincrement())
+    title             String
+    faculty           String
+    school            String
+    year              Int
+    moduleDescription String @db.Text
+    semester          Int
+    Unit              Unit[]
+}
 
-    @@index([name])
+model Unit {
+    id                         Int     @id @default(autoincrement())
+    courseId                   Int
+    unitNumber                 Int
+    unitName                   String
+    specificLearningObjectives String? @db.Text
+    content                    String? @db.Text
+    Course                     Course  @relation(fields: [courseId], references: [id], onDelete: Cascade, map: "Unit_ibfk_1")
+
+    @@index([courseId], map: "courseId")
 }
 
 enum UserRole {

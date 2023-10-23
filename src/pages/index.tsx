@@ -1,79 +1,64 @@
 import Head from "next/head";
-import Dashboard from "./components/dashboard";
 import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
-import ReactMarkdown from 'react-markdown';
 import { GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "~/server/auth";
-
-const topics = [
-    "The Importance of the Physical Database",
-    "Overview of Physical Storage Media",
-    "Relationship Between Database Components",
-    "Disk Performance Factors",
-    "Data Transfer Time",
-    "Optimization of Disk-Block Access",
-    "RAID Technology",
-    "File Organization and Record Format",
-    "Data Storage Formats on Disk",
-];
+import { Unit } from "@prisma/client";
 
 export default function Index() {
-    const [question, setQuestion] = useState("");
-    const [selectedTopic, setSelectedTopic] = useState(topics[0]);
+    const { data: units } = api.course.getAllUnits.useQuery({ courseId: 1 });
+    const [unitContent, setUnitContent] = useState("");
+    const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
 
-    const response = api.palm.getPalmResponse.useQuery({ text: `Can you tell me more about ${selectedTopic}?` });
+    const response = api.chatGPT.getTopicNotes.useQuery(selectedUnit);
 
     useEffect(() => {
         if (response.data) {
-            setQuestion(response.data);
+            setUnitContent(response.data);
         }
     }, [response.data]);
 
-    const handleTopicClick = (topic: string) => {
-        setSelectedTopic(topic);
-        void response.refetch();
+    const handleTopicClick = (unit: Unit) => {
+        setSelectedUnit(unit);
     };
+
     return (
         <>
             <Head>
                 <title>SyllaBot - Home</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div>
-                <Dashboard>
-                    <div className="flex">
-                        <div className="w-1/3 border-r border-gray-300 p-4">
-                            <h2 className="mb-4">Topics</h2>
-                            <ul>
-                                {topics.map((topic) => (
-                                    <li
-                                        key={topic}
-                                        onClick={() => handleTopicClick(topic)}
-                                        className="cursor-pointer hover:bg-gray-100 p-2 border-b border-gray-200"
-                                    >
-                                        {topic}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                        <div className="w-2/3 p-4">
-                            {selectedTopic && (
-                                <div className="border border-gray-300 p-4">
-                                    <h2 className="mb-4">{selectedTopic}</h2>
-                                    {response.isLoading ? (
-                                        <p>Loading...</p>
-                                    ) : (
-                                        <ReactMarkdown>{question}</ReactMarkdown>
-                                    )}
-                                </div>
-                            )}
-                        </div>
+            <div className="flex p-4">
+                {/* Topics List on the Left */}
+                <div className="w-1/4 bg-white border border-gray-300 shadow-md p-4 rounded-lg">
+                    <h2 className="mb-4">Topics</h2>
+                    <ul>
+                        {units &&
+                            units.map((unit) => (
+                                <li
+                                    key={unit.id}
+                                    onClick={() => handleTopicClick(unit)}
+                                    className="cursor-pointer hover:bg-gray-100 p-2 border-b border-gray-200"
+                                >
+                                    {unit.unitName}
+                                </li>
+                            ))}
+                    </ul>
+                </div>
+
+                {/* Response Box on the Right */}
+                {selectedUnit && (
+                    <div className="flex-1 bg-white border border-gray-300 shadow-md p-4 rounded-lg ml-4">
+                        {response.isLoading ? (
+                            <p>Loading...</p>
+                        ) : (
+                            <div className="prose" dangerouslySetInnerHTML={{ __html: unitContent }} />
+                        )}
                     </div>
-                </Dashboard>
+                )}
             </div>
         </>
-    )
+    );
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
@@ -85,12 +70,12 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
                 destination: '/login',
                 permanent: false,
             },
-        }
+        };
     }
 
     return {
         props: {
-            session: session
+            session: session,
         },
     };
 };

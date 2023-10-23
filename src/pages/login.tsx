@@ -27,7 +27,7 @@ export default function Home() {
             <button
               className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
               onClick={
-                () => void signIn('auth0', { callbackUrl: '/dashboard' })}
+                () => void signIn('auth0', { callbackUrl: '/' })}
             >
               Login
             </button>

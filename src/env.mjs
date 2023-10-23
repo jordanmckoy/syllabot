@@ -23,6 +23,9 @@ const server = z.object({
   AUTH0_CLIENT_SECRET: z.string(),
   AUTH0_CLIENT_ID: z.string(),
   PALM_KEY: z.string(),
+  OPENAI_KEY: z.string(),
+  UPSTASH_URL: z.string(),
+  UPSTASH_PASS: z.string(),
 });
 
 /**
@@ -48,6 +51,9 @@ const processEnv = {
   AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET,
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
   PALM_KEY: process.env.PALM_KEY,
+  OPENAI_KEY: process.env.OPENAI_KEY,
+  UPSTASH_URL: process.env.UPSTASH_URL,
+  UPSTASH_PASS: process.env.UPSTASH_PASS,
 };
 
 // Don't touch the part below
