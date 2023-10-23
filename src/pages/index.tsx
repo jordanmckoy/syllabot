@@ -1,22 +1,36 @@
 import Head from "next/head";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { api } from "~/utils/api";
-import { GetServerSidePropsContext } from "next";
+import { GetServerSidePropsContext, NextPage } from "next";
 import { getServerAuthSession } from "~/server/auth";
 import { Unit } from "@prisma/client";
+import Loading from "~/components/Loading";
+import { useSession } from "next-auth/react";
+import Login from "~/components/Login";
 
-export default function Index() {
-    const { data: units } = api.course.getAllUnits.useQuery({ courseId: 1 });
-    const [unitContent, setUnitContent] = useState("");
+const UnitNotes = (unit: Unit) => {
+    const { data, isLoading } = api.chatGPT.getUnitNotes.useQuery(unit);
+
+    if (isLoading) return <Loading />
+
+    if (!data) return <div>No notes returned</div>
+
+    return (
+        <div className="w-3/4 ml-4 bg-white border border-gray-300 shadow-md p-4 rounded-lg">
+            <h2 className="mb-4">Notes</h2>
+            <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: data }} />
+        </div>
+    );
+}
+
+const Units = () => {
+    const { data, isLoading } = api.course.getAllUnits.useQuery({ courseId: 1 });
+
     const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
 
-    const response = api.chatGPT.getTopicNotes.useQuery(selectedUnit);
+    if (isLoading) return <Loading />
 
-    useEffect(() => {
-        if (response.data) {
-            setUnitContent(response.data);
-        }
-    }, [response.data]);
+    if (!data) return <div>No units returned</div>
 
     const handleTopicClick = (unit: Unit) => {
         setSelectedUnit(unit);
@@ -24,54 +38,48 @@ export default function Index() {
 
     return (
         <>
-            <Head>
-                <title>SyllaBot - Home</title>
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
             <div className="flex p-4">
-                {/* Topics List on the Left */}
                 <div className="w-1/4 bg-white border border-gray-300 shadow-md p-4 rounded-lg">
                     <h2 className="mb-4">Topics</h2>
                     <ul>
-                        {units &&
-                            units.map((unit) => (
-                                <li
-                                    key={unit.id}
-                                    onClick={() => handleTopicClick(unit)}
-                                    className="cursor-pointer hover:bg-gray-100 p-2 border-b border-gray-200"
-                                >
-                                    {unit.unitName}
-                                </li>
-                            ))}
+                        {data.map((unit) => (
+                            <li
+                                key={unit.id}
+                                onClick={() => handleTopicClick(unit)}
+                                className="cursor-pointer hover:bg-gray-100 p-2 border-b border-gray-200"
+                            >
+                                {unit.unitName}
+                            </li>
+                        ))}
                     </ul>
                 </div>
-
-                {/* Response Box on the Right */}
-                {selectedUnit && (
-                    <div className="flex-1 bg-white border border-gray-300 shadow-md p-4 rounded-lg ml-4">
-                        {response.isLoading ? (
-                            <p>Loading...</p>
-                        ) : (
-                            <div className="prose" dangerouslySetInnerHTML={{ __html: unitContent }} />
-                        )}
-                    </div>
-                )}
+                {selectedUnit && <UnitNotes {...selectedUnit} />}
             </div>
         </>
     );
 }
 
+const Home: NextPage = () => {
+    const { data } = useSession();
+
+    if (!data) return <Login />
+
+    return (
+        <>
+            <Head>
+                <title>{"SyllaBot - Home"}</title>
+                <meta name="description" content="SyllaBot Ai Assisted Learning" />
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
+            <Units />
+        </>
+    );
+};
+
+export default Home;
+
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     const session = await getServerAuthSession(ctx);
-
-    if (!session) {
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
-        };
-    }
 
     return {
         props: {

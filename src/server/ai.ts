@@ -1,8 +1,7 @@
 import { ChatOpenAI } from "langchain/chat_models/openai";
-import { ChatPromptTemplate, MessagesPlaceholder, PromptTemplate } from "langchain/prompts"
+import { PromptTemplate } from "langchain/prompts"
 import { env } from "~/env.mjs";
 import { UpstashRedisChatMessageHistory } from "langchain/stores/message/upstash_redis";
-import { ConversationChain } from "langchain/chains";
 import { BufferMemory } from "langchain/memory";
 import { Unit } from "@prisma/client";
 import { LLMChain } from "langchain/chains";

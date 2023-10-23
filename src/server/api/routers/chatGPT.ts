@@ -8,7 +8,7 @@ import { remark } from 'remark';
 import html from 'remark-html';
 
 export const chatGPTRouter = createTRPCRouter({
-  getTopicNotes: protectedProcedure
+  getUnitNotes: protectedProcedure
     .input(z.object({
       id: z.number(),
       courseId: z.number(),
