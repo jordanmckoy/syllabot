@@ -1,7 +1,7 @@
 import { createTRPCRouter } from "~/server/api/trpc";
-import { palmRouter } from "./routers/palm";
-import { chatGPTRouter } from "./routers/chatGPT";
+import { chatRouter } from "./routers/chat";
 import { courseRouter } from "./routers/course";
+
 
 /**
  * This is the primary router for your server.
@@ -9,9 +9,8 @@ import { courseRouter } from "./routers/course";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  palm: palmRouter,
-  chatGPT: chatGPTRouter,
-  course: courseRouter
+    chat: chatRouter,
+    course: courseRouter
 });
 
 // export type definition of API
