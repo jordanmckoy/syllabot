@@ -12,15 +12,18 @@ type ChatProps = {
 
 const Chat = ({ socket, session }: ChatProps) => {
     const [messages, setMessages] = useState<SocketMessage[]>([])
+    const [response, setResponse] = useState("")
     const lastMessageRef = useRef(null);
 
     useEffect(() => {
         socket.on("old-message", data => setMessages([...messages, data]))
+        setResponse("")
     }, [socket, messages])
 
     useEffect(() => {
-        socket.on("new-message", data => setMessages([...messages, data]))
-    }, [socket, messages])
+        //@ts-ignore
+        socket.on("new-message", data => setResponse([...response, data.text]))
+    }, [socket, response])
 
     useEffect(() => {
         // 👇️ scroll to bottom every time messages change
@@ -30,7 +33,7 @@ const Chat = ({ socket, session }: ChatProps) => {
 
     return (
         <>
-            {socket && <ChatBody session={session} messages={messages} />}
+            {socket && <ChatBody session={session} messages={messages} response={response} />}
             {socket && <ChatFooter session={session} socket={socket} />}
         </>
     );

@@ -1,6 +1,7 @@
 import { Server } from 'socket.io';
 import { db } from '../../server/db';
 import { env } from '~/env.mjs';
+import { getChatGPTResponse } from '~/server/helpers/chatGPT';
 
 export type SocketMessage = {
     id: string;
@@ -29,9 +30,7 @@ const ioHandler = (req, res) => {
 
             socket.on('message', (data: SocketMessage) => {
                 socket.emit('old-message', data);
-                data.text = 'Hello from server'
-                data.sender = 'server'
-                socket.emit('new-message', data);
+                getChatGPTResponse({ prompt: data.text, userId: userId, unitId: 1 }, socket)
             });
 
             socket.on('disconnect', () => {

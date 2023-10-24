@@ -1,6 +1,8 @@
 import OpenAI from "openai";
 import { env } from "~/env.mjs";
 import { redis } from "../db";
+import { Socket } from "socket.io";
+import { SocketMessage } from "~/pages/api/socket";
 
 export type MessageParam = {
     prompt: string;
@@ -25,9 +27,16 @@ const systemTemplate: ChatMessage = {
 
 export async function getChatGPTResponse(
     params: MessageParam,
-    sendToWebSocket: (message: ChatMessage) => void
+    socket: Socket
 ) {
     try {
+        const message: SocketMessage = {
+            id: Date.now().toString(),
+            text: "",
+            socketId: socket.id,
+            userName: "ChatGPT",
+            sender: "ChatGPT",
+        }
         const client = new OpenAI({ apiKey: env.OPENAI_KEY });
 
         const history = await redis.get(`chatHistory:${params.userId}:${params.unitId}`);
@@ -42,8 +51,8 @@ export async function getChatGPTResponse(
             for await (const part of stream) {
                 const token = part?.choices[0]?.delta;
                 if (token && token.content) {
-                    const message: ChatMessage = { role: "assistant", content: token.content };
-                    sendToWebSocket(message); // Send the message over the WebSocket
+                    message.text = token.content;
+                    socket.emit("new-message", message);
                 }
             }
 
@@ -65,8 +74,8 @@ export async function getChatGPTResponse(
             for await (const part of stream) {
                 const token = part?.choices[0]?.delta;
                 if (token && token.content) {
-                    const message: ChatMessage = { role: "assistant", content: token.content };
-                    sendToWebSocket(message); // Send the message over the WebSocket
+                    message.text = token.content;
+                    socket.emit("new-message", message);
                 }
             }
 
@@ -78,7 +87,5 @@ export async function getChatGPTResponse(
         }
     } catch (error) {
         console.log(error);
-        const errorMessage: ChatMessage = { role: "assistant", content: "Something went wrong" };
-        sendToWebSocket(errorMessage); // Send an error message over the WebSocket
     }
 }
