@@ -78,6 +78,7 @@ model Unit {
     description String
     content     String
     courseId    String
+    position    Int        @default(autoincrement())
     course      Course     @relation(fields: [courseId], references: [id])
     documents   Document[]
 }

@@ -1,6 +1,9 @@
 import React, { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Session } from 'next-auth'
+import Login from './Login'
+import Link from 'next/link'
 
 const user = {
     name: 'Tom Cook',
@@ -9,10 +12,8 @@ const user = {
         'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
 }
 const navigation = [
-    { name: 'Dashboard', href: '#', current: true },
-    { name: 'Team', href: '#', current: false },
-    { name: 'Projects', href: '#', current: false },
-    { name: 'Calendar', href: '#', current: false },
+    { name: 'Dashboard', href: '/dashboard', current: true },
+    { name: 'Courses', href: '/course', current: false },
     { name: 'Reports', href: '#', current: false },
 ]
 const userNavigation = [
@@ -27,12 +28,15 @@ function classNames(...classes: string[]) {
 
 type Props = {
     children: React.ReactNode
-    currentPage: string
+    session: Session | null | undefined
 }
 
-export default function Layout({ children, currentPage }: Props) {
+export default function Layout({ children, session }: Props) {
+
+    if (!session) return <Login />
+
     return (
-        <div className="min-h-full">
+        <div className="min-h-screen">
             <Disclosure as="nav" className="bg-gray-800">
                 {({ open }) => (
                     <>
@@ -49,7 +53,7 @@ export default function Layout({ children, currentPage }: Props) {
                                     <div className="hidden md:block">
                                         <div className="ml-10 flex items-baseline space-x-4">
                                             {navigation.map((item) => (
-                                                <a
+                                                <Link
                                                     key={item.name}
                                                     href={item.href}
                                                     className={classNames(
@@ -61,7 +65,7 @@ export default function Layout({ children, currentPage }: Props) {
                                                     aria-current={item.current ? 'page' : undefined}
                                                 >
                                                     {item.name}
-                                                </a>
+                                                </Link>
                                             ))}
                                         </div>
                                     </div>
@@ -83,7 +87,7 @@ export default function Layout({ children, currentPage }: Props) {
                                                 <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                                                     <span className="absolute -inset-1.5" />
                                                     <span className="sr-only">Open user menu</span>
-                                                    <img className="h-8 w-8 rounded-full" src={user.imageUrl} alt="" />
+                                                    {session.user.image ? <img className="h-8 w-8 rounded-full" src={session.user.image} alt="" /> : <img className="h-8 w-8 rounded-full" src={user.imageUrl} />}
                                                 </Menu.Button>
                                             </div>
                                             <Transition
@@ -99,7 +103,7 @@ export default function Layout({ children, currentPage }: Props) {
                                                     {userNavigation.map((item) => (
                                                         <Menu.Item key={item.name}>
                                                             {({ active }) => (
-                                                                <a
+                                                                <Link
                                                                     href={item.href}
                                                                     className={classNames(
                                                                         active ? 'bg-gray-100' : '',
@@ -107,7 +111,7 @@ export default function Layout({ children, currentPage }: Props) {
                                                                     )}
                                                                 >
                                                                     {item.name}
-                                                                </a>
+                                                                </Link>
                                                             )}
                                                         </Menu.Item>
                                                     ))}
@@ -151,11 +155,11 @@ export default function Layout({ children, currentPage }: Props) {
                             <div className="border-t border-gray-700 pb-3 pt-4">
                                 <div className="flex items-center px-5">
                                     <div className="flex-shrink-0">
-                                        <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
+                                        {session.user.image ? <img className="h-10 w-10 rounded-full" src={session.user.image} alt="" /> : <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />}
                                     </div>
                                     <div className="ml-3">
-                                        <div className="text-base font-medium leading-none text-white">{user.name}</div>
-                                        <div className="text-sm font-medium leading-none text-gray-400">{user.email}</div>
+                                        <div className="text-base font-medium leading-none text-white">{session.user.name}</div>
+                                        <div className="text-sm font-medium leading-none text-gray-400">{session.user.email}</div>
                                     </div>
                                     <button
                                         type="button"
@@ -184,14 +188,14 @@ export default function Layout({ children, currentPage }: Props) {
                 )}
             </Disclosure>
 
-            <header className="shadow">
-                <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <h1 className="text-3xl font-bold tracking-tight">{currentPage}</h1>
-                </div>
-            </header>
             <main>
                 <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">{children}</div>
             </main>
+            <footer className="footer footer-center p-4 bg-base-300 text-base-content sticky top-[100vh]">
+                <aside>
+                    <p>Copyright © 2023 - All right reserved by ACME Industries Ltd</p>
+                </aside>
+            </footer>
         </div>
     )
 }

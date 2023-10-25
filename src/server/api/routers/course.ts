@@ -9,7 +9,7 @@ export const courseRouter = createTRPCRouter({
     getCourse: publicProcedure
         .input(z.string())
         .query(({ input, ctx }) => {
-            return ctx.db.course.findUnique({ where: { id: input } });
+            return ctx.db.course.findUnique({ where: { id: input }, include: { Unit: true } });
         }),
     getCourseUnits: publicProcedure
         .input(z.string())
