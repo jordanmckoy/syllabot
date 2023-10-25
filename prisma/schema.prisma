@@ -60,6 +60,26 @@ model Document {
     id      String                 @id @default(cuid())
     content String
     vector  Unsupported("vector")?
+    unitId  String?
+    Unit    Unit?                  @relation(fields: [unitId], references: [id])
+}
+
+model Course {
+    id          String @id @default(cuid())
+    name        String
+    description String
+    image       String
+    Unit        Unit[]
+}
+
+model Unit {
+    id          String     @id @default(cuid())
+    name        String
+    description String
+    content     String
+    courseId    String
+    course      Course     @relation(fields: [courseId], references: [id])
+    documents   Document[]
 }
 
 enum UserRole {

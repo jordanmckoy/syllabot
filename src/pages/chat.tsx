@@ -49,8 +49,6 @@ const ChatPage: NextPage = () => {
             </div>
         </>
     );
-
-
 };
 
 export default ChatPage;

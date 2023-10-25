@@ -1,6 +1,5 @@
 import { Server } from 'socket.io';
 import { db } from '../../server/db';
-import { env } from '~/env.mjs';
 import { getChatGPTResponse } from '~/server/helpers/chatGPT';
 
 export type SocketMessage = {
