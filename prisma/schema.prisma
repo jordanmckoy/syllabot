@@ -56,39 +56,6 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-model Course {
-    id                Int    @id @default(autoincrement())
-    title             String
-    faculty           String
-    school            String
-    year              Int
-    moduleDescription String @db.Text
-    semester          Int
-    Unit              Unit[]
-}
-
-model Unit {
-    id                         Int     @id @default(autoincrement())
-    courseId                   Int
-    unitNumber                 Int
-    unitName                   String
-    specificLearningObjectives String? @db.Text
-    content                    String? @db.Text
-    Course                     Course  @relation(fields: [courseId], references: [id], onDelete: Cascade, map: "Unit_ibfk_1")
-    Notes                      Notes[]
-
-    @@index([courseId], map: "courseId")
-}
-
-model Notes {
-    unitId    Int      @id
-    content   String   @db.Text
-    Unit      Unit     @relation(fields: [unitId], references: [id], onDelete: Cascade, map: "Notes_ibfk_1")
-    createdAt DateTime @default(now())
-
-    @@index([unitId], map: "unitId")
-}
-
 model Document {
     id      String                 @id @default(cuid())
     content String

@@ -1,3 +1,4 @@
+-- Enable Vectors
 CREATE EXTENSION IF NOT EXISTS vector;
 
 -- CreateEnum
@@ -52,40 +53,6 @@ CREATE TABLE "VerificationToken" (
 );
 
 -- CreateTable
-CREATE TABLE "Course" (
-    "id" SERIAL NOT NULL,
-    "title" TEXT NOT NULL,
-    "faculty" TEXT NOT NULL,
-    "school" TEXT NOT NULL,
-    "year" INTEGER NOT NULL,
-    "moduleDescription" TEXT NOT NULL,
-    "semester" INTEGER NOT NULL,
-
-    CONSTRAINT "Course_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Unit" (
-    "id" SERIAL NOT NULL,
-    "courseId" INTEGER NOT NULL,
-    "unitNumber" INTEGER NOT NULL,
-    "unitName" TEXT NOT NULL,
-    "specificLearningObjectives" TEXT,
-    "content" TEXT,
-
-    CONSTRAINT "Unit_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Notes" (
-    "unitId" INTEGER NOT NULL,
-    "content" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "Notes_pkey" PRIMARY KEY ("unitId")
-);
-
--- CreateTable
 CREATE TABLE "Document" (
     "id" TEXT NOT NULL,
     "content" TEXT NOT NULL,
@@ -115,20 +82,8 @@ CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token"
 -- CreateIndex
 CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
 
--- CreateIndex
-CREATE INDEX "courseId" ON "Unit"("courseId");
-
--- CreateIndex
-CREATE INDEX "unitId" ON "Notes"("unitId");
-
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_to_User" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_to_User" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Unit" ADD CONSTRAINT "Unit_ibfk_1" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Notes" ADD CONSTRAINT "Notes_ibfk_1" FOREIGN KEY ("unitId") REFERENCES "Unit"("id") ON DELETE CASCADE ON UPDATE CASCADE;
