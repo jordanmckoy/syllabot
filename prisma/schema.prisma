@@ -75,8 +75,18 @@ model Unit {
     specificLearningObjectives String? @db.Text
     content                    String? @db.Text
     Course                     Course  @relation(fields: [courseId], references: [id], onDelete: Cascade, map: "Unit_ibfk_1")
+    Notes                      Notes[]
 
     @@index([courseId], map: "courseId")
+}
+
+model Notes {
+    unitId    Int      @id
+    content   String   @db.Text
+    Unit      Unit     @relation(fields: [unitId], references: [id], onDelete: Cascade, map: "Notes_ibfk_1")
+    createdAt DateTime @default(now())
+
+    @@index([unitId], map: "unitId")
 }
 
 enum UserRole {

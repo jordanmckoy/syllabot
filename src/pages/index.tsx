@@ -16,19 +16,12 @@ const Home: NextPage = () => {
 
     useEffect(() => {
         fetch('/api/socket').finally(() => {
-            const newSocket = io({
-                withCredentials: true,
-                auth: {
-                    sessionId: session.data.user.id
-                }
-            });
+            const newSocket = io({ withCredentials: true, auth: { sessionId: session.data.user.id } });
             setSocket(newSocket);
-
             return () => {
                 newSocket.disconnect();
             };
         });
-
     }, []);
 
     return (

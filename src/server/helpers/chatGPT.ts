@@ -6,8 +6,7 @@ import { SocketMessage } from "~/pages/api/socket";
 
 export type MessageParam = {
     prompt: string;
-    userId: string;
-    unitId: number;
+    conversationId: string;
 };
 
 export type ChatMessage = {
@@ -21,8 +20,12 @@ const systemTemplate: ChatMessage = {
     Your second objective is to answer any questions that the student may ask on the topic you are currently conversing with them about. Please focus on answering questions directly related to the provided notes and avoid introducing additional information or going off-topic. 
     You have access to your memory. When answering questions, you can use Markdown as well to get your point across.
     The Unit May not be included in that case a question will be provided answer questions only when that case has happened and visa versa.
-    Each Prompt has some meta data in the form of UserIds and Username and Unit Name
     `,
+};
+
+const notesTemplate: ChatMessage = {
+    role: "system",
+    content: `Please provide extensive and detailed notes and explanations, in Markdown format, for the specific learning objectives and content mentioned in the given course unit structure using the provided JSON data. Your answers should assist the student in understanding and clarifying any points within the notes, ensuring their comprehension and learning. Please focus on answering questions directly related to the provided notes and avoid introducing additional information or going off-topic.`,
 };
 
 export async function getChatGPTResponse(
@@ -39,12 +42,13 @@ export async function getChatGPTResponse(
         }
         const client = new OpenAI({ apiKey: env.OPENAI_KEY });
 
-        const history = await redis.get(`chatHistory:${params.userId}:${params.unitId}`);
+        const history = await redis.get(`chatHistory:${params.conversationId}`);
 
         if (!history) {
             const stream = await client.chat.completions.create({
                 messages: [systemTemplate, { role: "user", content: params.prompt }],
                 model: "gpt-3.5-turbo",
+                temperature: 0,
                 stream: true,
             });
 
@@ -57,17 +61,18 @@ export async function getChatGPTResponse(
             }
 
             await redis.set(
-                `chatHistory:${params.userId}:${params.unitId}`,
+                `chatHistory:${params.conversationId}`,
                 JSON.stringify([systemTemplate, { role: "user", content: params.prompt }])
             );
         } else {
-            const messageHistory = history as ChatMessage[];
+            const messageHistory = JSON.parse(history) as ChatMessage[];
 
             messageHistory.push({ role: "user", content: params.prompt });
 
             const stream = await client.chat.completions.create({
                 messages: messageHistory,
                 model: "gpt-3.5-turbo",
+                temperature: 0,
                 stream: true,
             });
 
@@ -80,7 +85,7 @@ export async function getChatGPTResponse(
             }
 
             await redis.set(
-                `chatHistory:${params.userId}:${params.unitId}`,
+                `chatHistory:${params.conversationId}`,
                 JSON.stringify([...messageHistory, { role: "user", content: params.prompt }]
                 )
             );

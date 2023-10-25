@@ -4,6 +4,7 @@ import {
 } from "~/server/api/trpc";
 import { z } from "zod";
 import { db } from "~/server/db";
+import { generateNotes } from "~/server/helpers/chatGPT";
 
 export const courseRouter = createTRPCRouter({
     getAllUnits: protectedProcedure
@@ -16,4 +17,7 @@ export const courseRouter = createTRPCRouter({
             });
             return query;
         }),
+    generateNotes: protectedProcedure.query(async () => {
+        generateNotes
+    }),
 });

@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  mariadb:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: QSqlB8rOO4ese0qH7tDI0GEn
+      MYSQL_DATABASE: database
+    ports:
+      - 3306:3306
+    volumes:
+      - /opt/mariadb:/var/lib/mysql
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - /opt/redis:/data
