@@ -1,20 +1,16 @@
 version: '3'
 
 services:
-  mariadb:
-    image: mariadb
-    restart: always
+  db:
+    image: ankane/pgvector
+    ports:
+      - 5432:5432
+    volumes:
+      - db:/var/lib/postgresql/data
     environment:
-      MYSQL_ROOT_PASSWORD: QSqlB8rOO4ese0qH7tDI0GEn
-      MYSQL_DATABASE: database
-    ports:
-      - 3306:3306
-    volumes:
-      - /opt/mariadb:/var/lib/mysql
-  redis:
-    image: redis
-    restart: always
-    ports:
-      - 6379:6379
-    volumes:
-      - /opt/redis:/data
+      - POSTGRES_PASSWORD=Casket-Condone8-Name
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=database
+
+volumes:
+  db:
