@@ -1,5 +1,7 @@
 // Import necessary Prisma Client and other dependencies
-const { PrismaClient } = require('@prisma/client');
+import { PrismaVectorStore } from "langchain/vectorstores/prisma";
+import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 // Instantiate the Prisma Client
 const prisma = new PrismaClient();
@@ -104,29 +106,55 @@ const courseData = [
 ];
 
 async function seedCoursesAndUnits() {
+
     for (const data of courseData) {
         await prisma.course.create({
             data,
         });
     }
 
+    // Use the `withModel` method to get proper type hints for `metadata` field:
+    const vectorStore = PrismaVectorStore.withModel(prisma).create(
+        new OpenAIEmbeddings(
+            {
+                openAIApiKey: process.env.OPENAI_KEY,
+            }
+        ),
+        {
+            prisma: Prisma,
+            tableName: "Unit",
+            vectorColumnName: "vector",
+            columns: {
+                id: PrismaVectorStore.IdColumn,
+                content: PrismaVectorStore.ContentColumn,
+            },
+        }
+    );
+
     const courses = await prisma.course.findMany();
 
-    for (const course of courses) {
+    const units = await Promise.all(courses.map(async (course) => {
         let count = 0;
+        const units = [];
         while (count < 6) {
-            await prisma.unit.create({
-                data: {
-                    name: `Unit ${count + 1}`,
-                    description: lorum,
-                    content: lorumMarkdown,
-                    courseId: course.id,
-                }
-            });
+            units.push(
+                prisma.unit.create({
+                    data: {
+                        name: `Unit ${count + 1}`,
+                        description: lorum,
+                        content: lorumMarkdown,
+                        courseId: course.id,
+                    }
+                })
+            );
             count++;
         }
-    }
+        return Promise.all(units);
+    }));
+
+    await vectorStore.addModels(units.flat());
 }
+
 
 async function main() {
     try {

@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+
     "build": "next build",
     "db:push": "prisma db push",
     "dev": "next dev",
     "postinstall": "prisma generate",
+    "seed": "node seed.mjs",
     "lint": "next lint",
     "start": "next start"
   },
