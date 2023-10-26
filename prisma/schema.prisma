@@ -46,6 +46,7 @@ model User {
     role          UserRole  @default(USER)
     accounts      Account[]
     sessions      Session[]
+    // ChatHistory   ChatHistory[]
 }
 
 model VerificationToken {
@@ -62,6 +63,7 @@ model Course {
     description String
     image       String
     Unit        Unit[]
+    // ChatHistory ChatHistory[]
 }
 
 model Unit {
@@ -73,7 +75,20 @@ model Unit {
     courseId    String
     position    Int                    @default(autoincrement())
     course      Course                 @relation(fields: [courseId], references: [id])
+    // ChatHistory ChatHistory[]
 }
+
+// model ChatHistory {
+//     id        String   @id @default(cuid())
+//     userId    String
+//     courseId  String
+//     unitId    String
+//     message   String
+//     createdAt DateTime
+//     user      User     @relation(fields: [userId], references: [id])
+//     course    Course   @relation(fields: [courseId], references: [id])
+//     unit      Unit     @relation(fields: [unitId], references: [id])
+// }
 
 enum UserRole {
     ADMIN

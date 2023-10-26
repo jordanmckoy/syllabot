@@ -50,7 +50,7 @@ const CoursePage = () => {
                     <p className="text-gray-300">{data.description}</p>
 
                     <h2 className="mt-6 text-xl font-semibold">{selectedUnit ? selectedUnit.name : "Select a unit"}</h2>
-                    <div className="mt-2" dangerouslySetInnerHTML={{ __html: unitContentHtml }} />
+                    <div className="prose min-w-full mt-2 text-white" dangerouslySetInnerHTML={{ __html: unitContentHtml }} />
                 </div>
 
                 {/* Right Column */}
@@ -123,7 +123,9 @@ const CoursePage = () => {
                                         Assistant
                                     </Dialog.Title>
                                     <div className="p-5">
-                                        <AiChat />
+                                        {selectedUnit ? (<AiChat unitId={selectedUnit.id} userId={session!.user.id} />) :
+                                            <p className="text-white">Please select a unit to chat with SyllaBot</p>
+                                        }
                                     </div>
                                 </div>
                             </Transition.Child>

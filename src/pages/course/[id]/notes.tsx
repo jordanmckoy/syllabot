@@ -1,7 +1,7 @@
-import Layout from "~/components/Layout";
+import Layout from "~/components/layout/Layout";
 import { api } from "~/utils/api"
 import { notesSchema } from "~/utils/schemas";
-import Loading from "~/components/Loading";
+import Loading from "~/components/ui/Loading";
 import Form, { useZodForm } from '~/components/forms/Form';
 import Input from '~/components/forms/Input';
 import Select from '~/components/forms/Select';
@@ -32,7 +32,7 @@ const UploadNotes = () => {
     if (isLoading) return <Loading />
 
     return (
-        <Layout currentPage="Notes Upload" session={session!}>
+        <Layout session={session!}>
             <Form
                 form={form}
                 onSubmit={(data) => {

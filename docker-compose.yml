@@ -11,6 +11,11 @@ services:
       - POSTGRES_PASSWORD=Casket-Condone8-Name
       - POSTGRES_USER=postgres
       - POSTGRES_DB=database
-
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - db:/var/lib/redis/data
 volumes:
   db:

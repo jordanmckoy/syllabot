@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { RedisClientType, createClient } from "redis";
 import { env } from "~/env.mjs";
 
 const globalForPrisma = globalThis as unknown as {
@@ -14,8 +15,8 @@ export const db =
 
 if (env.NODE_ENV !== "production") globalForPrisma.prisma = db;
 
-// const globalForRedis = globalThis as unknown as {
-//   redis: RedisClientType | undefined;
-// };
+const globalForRedis = globalThis as unknown as {
+  redis: RedisClientType | undefined;
+};
 
-// export const redis = globalForRedis.redis ?? await createClient().connect();
+export const redis = globalForRedis.redis ?? await createClient().connect();
