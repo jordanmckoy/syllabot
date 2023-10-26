@@ -10,6 +10,7 @@ import { useState, Fragment } from "react"
 import course from ".."
 import { Unit } from "@prisma/client"
 import { getMarkdown } from "~/utils/markdown"
+import AiChat from "~/components/AiChat"
 
 const CoursePage = () => {
     const [isAssistantModalOpen, setAssistantModalOpen] = useState(false);
@@ -61,7 +62,7 @@ const CoursePage = () => {
                             {data.Unit.map((unit, index) => (
                                 <li
                                     key={index}
-                                    className={`cursor-pointer ${selectedUnit === unit ? "text-blue-600" : "text-gray-600"
+                                    className={`cursor-pointer ${selectedUnit === unit ? "text-green-600" : "text-gray-300"
                                         }`}
                                     onClick={() => selectUnit(unit)}
                                 >
@@ -75,7 +76,7 @@ const CoursePage = () => {
                         className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600"
                         onClick={() => setAssistantModalOpen(true)}
                     >
-                        Assistant
+                        Ask SyllaBot
                     </button>
                 </div>
 
@@ -123,7 +124,7 @@ const CoursePage = () => {
                                         Assistant
                                     </Dialog.Title>
                                     <div className="mt-2">
-                                        {/* Add assistant content here */}
+                                        <AiChat />
                                     </div>
                                 </div>
                             </Transition.Child>
