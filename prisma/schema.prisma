@@ -56,14 +56,6 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-model Document {
-    id      String                 @id @default(cuid())
-    content String
-    vector  Unsupported("vector")?
-    unitId  String?
-    Unit    Unit?                  @relation(fields: [unitId], references: [id])
-}
-
 model Course {
     id          String @id @default(cuid())
     name        String
@@ -73,14 +65,14 @@ model Course {
 }
 
 model Unit {
-    id          String     @id @default(cuid())
+    id          String                 @id @default(cuid())
     name        String
     description String
     content     String
+    vector      Unsupported("vector")?
     courseId    String
-    position    Int        @default(autoincrement())
-    course      Course     @relation(fields: [courseId], references: [id])
-    documents   Document[]
+    position    Int                    @default(autoincrement())
+    course      Course                 @relation(fields: [courseId], references: [id])
 }
 
 enum UserRole {
