@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
-import Layout from "~/components/Layout"
-import Loading from "~/components/Loading";
+import Layout from "~/components/layout/Layout"
+import Loading from "~/components/ui/Loading";
 import { api } from "~/utils/api"
 
 const CoursesPage = () => {

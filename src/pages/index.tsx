@@ -1,5 +1,5 @@
 import { CloudArrowUpIcon, LockClosedIcon, ServerIcon } from '@heroicons/react/20/solid'
-import Header from '~/components/Header';
+import Header from '~/components/layout/Header';
 
 function Home() {
     return (

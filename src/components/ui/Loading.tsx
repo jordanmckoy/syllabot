@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import LoadingSVG from '../../public/assets/loading.svg'
+import LoadingSVG from '/public/assets/loading.svg'
 
 const Loading = () => {
     return (

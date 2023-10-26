@@ -1,13 +1,12 @@
 import { GetServerSidePropsContext } from "next"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
-import Layout from "~/components/Layout"
-import Loading from "~/components/Loading"
+import Layout from "~/components/layout/Layout"
+import Loading from "~/components/ui/Loading"
 import { getServerAuthSession } from "~/server/auth"
 import { api } from "~/utils/api"
 import { Dialog, Transition } from "@headlessui/react";
 import { useState, Fragment } from "react"
-import course from ".."
 import { Unit } from "@prisma/client"
 import { getMarkdown } from "~/utils/markdown"
 import AiChat from "~/components/AiChat"
@@ -116,14 +115,14 @@ const CoursePage = () => {
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                                <div className="inline-block w-full max-w-3xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-gray-800 shadow-xl rounded-2xl">
                                     <Dialog.Title
                                         as="h3"
-                                        className="text-lg font-medium leading-6 text-gray-900"
+                                        className="text-lg font-medium leading-6 text-white"
                                     >
                                         Assistant
                                     </Dialog.Title>
-                                    <div className="mt-2">
+                                    <div className="p-5">
                                         <AiChat />
                                     </div>
                                 </div>
