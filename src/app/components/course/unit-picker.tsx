@@ -1,7 +1,7 @@
-'use client'
 import { Dialog, Transition } from "@headlessui/react";
 import { Unit } from "@prisma/client";
 import { Fragment } from "react";
+import Chat from "../ai/Chat";
 
 type ChildProps = {
     units: Unit[],
@@ -39,7 +39,6 @@ export default function UnitPicker(props: ChildProps) {
                 </button>
             </div>
 
-            {/* Assistant Modal */}
             <Transition appear show={props.modalState} as={Fragment}>
                 <Dialog
                     as="div"
@@ -83,9 +82,7 @@ export default function UnitPicker(props: ChildProps) {
                                     Assistant
                                 </Dialog.Title>
                                 <div className="p-5">
-                                    {/* {selectedUnit ? (<AiChat unitId={selectedUnit.id} userId={session!.user.id} />) :
-                                            <p className="text-white">Please select a unit to chat with SyllaBot</p>
-                                        } */}
+                                    {props.unit ? <Chat /> : <p className="text-white">Please select a unit to chat with SyllaBot</p>}
                                 </div>
                             </div>
                         </Transition.Child>

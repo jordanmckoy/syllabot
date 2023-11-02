@@ -1,6 +1,5 @@
 import { NextRequest } from 'next/server';
 import { Message as VercelChatMessage, StreamingTextResponse } from 'ai';
-
 import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { BytesOutputParser } from 'langchain/schema/output_parser';
 import { PromptTemplate } from 'langchain/prompts';
@@ -41,8 +40,8 @@ export async function POST(req: NextRequest) {
      * https://js.langchain.com/docs/modules/model_io/models/
      */
     const model = new ChatOpenAI({
-        temperature: 0.8,
-        openAIApiKey: process.env.OPENAI_API_KEY,
+        temperature: 0,
+        modelName: 'gpt-3.5-turbo'
     });
 
     /**
@@ -63,8 +62,6 @@ export async function POST(req: NextRequest) {
         chat_history: formattedPreviousMessages.join('\n'),
         input: currentMessageContent,
     });
-
-    console.log('stream', stream);
 
     return new StreamingTextResponse(stream);
 }
