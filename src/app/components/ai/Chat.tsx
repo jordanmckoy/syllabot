@@ -11,7 +11,7 @@ export default function Chat() {
         <div key={m.id} className="chat chat-start">
           <div className="chat-image avatar">
             <div className="w-10 rounded-full">
-              <img src="/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+              <img src="https://media.discordapp.net/attachments/781557164984238080/781581518824538143/84c4b572d88635ee5310d037bbb6a435.png?ex=65565a03&is=6543e503&hm=b29da75345d0f8be6c476ee010eb2b4e27e914128e3759fc06d26b4f5c0fbb9f&=&width=1130&height=1130" />
             </div>
           </div>
           <div className="chat-bubble">{m.role === 'user' ? 'User: ' : 'AI: '}

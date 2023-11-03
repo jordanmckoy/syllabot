@@ -1,67 +1,82 @@
 import { NextRequest } from 'next/server';
 import { Message as VercelChatMessage, StreamingTextResponse } from 'ai';
+
 import { ChatOpenAI } from 'langchain/chat_models/openai';
-import { BytesOutputParser } from 'langchain/schema/output_parser';
-import { PromptTemplate } from 'langchain/prompts';
+import { BytesOutputParser, StringOutputParser } from 'langchain/schema/output_parser';
+import { ChatPromptTemplate, HumanMessagePromptTemplate, PromptTemplate, SystemMessagePromptTemplate } from 'langchain/prompts';
+import { PrismaVectorStore } from 'langchain/vectorstores/prisma';
+import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
+import { prisma } from '@/server/db';
+import { Unit, Prisma } from '@prisma/client';
+import { env } from 'process';
+import { formatDocumentsAsString } from 'langchain/util/document';
+import { RunnablePassthrough, RunnableSequence } from 'langchain/schema/runnable';
 
-export const runtime = 'edge';
+const vectorStore = PrismaVectorStore.withModel<Unit>(prisma).create(
+    new OpenAIEmbeddings(
+        {
+            openAIApiKey: env.OPENAI_API_KEY,
+        }
+    ),
+    {
+        prisma: Prisma,
+        tableName: "Unit",
+        vectorColumnName: "vector",
+        columns: {
+            id: PrismaVectorStore.IdColumn,
+            content: PrismaVectorStore.ContentColumn,
+        },
+    }
+);
 
-/**
- * Basic memory formatter that stringifies and passes
- * message history directly into the model.
- */
+const retriever = vectorStore.asRetriever();
+
+const SYSTEM_TEMPLATE = `Use the following pieces of context to answer the question at the end.
+If you don't know the answer, just say that you don't know, don't try to make up an answer.
+----------------
+{context}
+
+`;
+const messages = [
+    SystemMessagePromptTemplate.fromTemplate(SYSTEM_TEMPLATE),
+    HumanMessagePromptTemplate.fromTemplate("{question}"),
+];
+const prompt = ChatPromptTemplate.fromMessages(messages);
+
+
 const formatMessage = (message: VercelChatMessage) => {
     return `${message.role}: ${message.content}`;
 };
 
-const TEMPLATE = `You are a pirate named Patchy. All responses must be extremely verbose and in pirate dialect.
- 
-Current conversation:
-{chat_history}
- 
-User: {input}
-AI:`;
-
-/*
- * This handler initializes and calls a simple chain with a prompt,
- * chat model, and output parser. See the docs for more information:
- *
- * https://js.langchain.com/docs/guides/expression_language/cookbook#prompttemplate--llm--outputparser
- */
 export async function POST(req: NextRequest) {
-    const body = await req.json();
-    const messages = body.messages ?? [];
-    const formattedPreviousMessages = messages.slice(0, -1).map(formatMessage);
-    const currentMessageContent = messages[messages.length - 1].content;
+    try {
+        const body = await req.json();
+        const messages = body.messages as VercelChatMessage[] ?? [];
+        const formattedPreviousMessages = messages.slice(0, -1).map(formatMessage);
+        const currentMessageContent = messages[messages.length - 1].content;
 
-    const prompt = PromptTemplate.fromTemplate(TEMPLATE);
-    /**
-     * See a full list of supported models at:
-     * https://js.langchain.com/docs/modules/model_io/models/
-     */
-    const model = new ChatOpenAI({
-        temperature: 0,
-        modelName: 'gpt-3.5-turbo'
-    });
+        const model = new ChatOpenAI({
+            openAIApiKey: env.OPENAI_API_KEY,
+            streaming: true,
+            modelName: "gpt-3.5-turbo"
+        });
 
-    /**
-     * Chat models stream message chunks rather than bytes, so this
-     * output parser handles serialization and encoding.
-     */
-    const outputParser = new BytesOutputParser();
+        const chain = RunnableSequence.from([
+            {
+                context: retriever.pipe(formatDocumentsAsString),
+                question: new RunnablePassthrough()
+            },
+            prompt,
+            model,
+            new StringOutputParser(),
+        ]);
 
-    /*
-     * Can also initialize as:
-     *
-     * import { RunnableSequence } from "langchain/schema/runnable";
-     * const chain = RunnableSequence.from([prompt, model, outputParser]);
-     */
-    const chain = prompt.pipe(model).pipe(outputParser);
+        const stream = await chain.stream(currentMessageContent);
 
-    const stream = await chain.stream({
-        chat_history: formattedPreviousMessages.join('\n'),
-        input: currentMessageContent,
-    });
+        return new StreamingTextResponse(stream);
 
-    return new StreamingTextResponse(stream);
+    } catch (error: any) {
+        console.error(error);
+        return new Response(error, { status: 500 });
+    }
 }
