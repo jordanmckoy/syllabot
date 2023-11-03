@@ -1,26 +1,33 @@
-import { PrismaClient } from "@prisma/client";
-import { Redis } from "@upstash/redis";
-
-import { env } from "~/env.mjs";
+import { Prisma, PrismaClient, Unit } from "@prisma/client";
+import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+import { PrismaVectorStore } from "langchain/vectorstores/prisma";
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+    prisma: PrismaClient | undefined;
 };
 
-export const db =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    log:
-      env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-  });
+export const prisma =
+    globalForPrisma.prisma ??
+    new PrismaClient({
+        log:
+            process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    });
 
-if (env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
-const globalForRedis = globalThis as unknown as {
-  redis: Redis | undefined;
-};
-
-export const redis = globalForRedis.redis ?? new Redis({
-  url: env.UPSTASH_URL,
-  token: env.UPSTASH_PASS
-});
+export const vectorStore = PrismaVectorStore.withModel<Unit>(prisma).create(
+    new OpenAIEmbeddings(
+        {
+            openAIApiKey: process.env.OPENAI_API_KEY,
+        }
+    ),
+    {
+        prisma: Prisma,
+        tableName: "Unit",
+        vectorColumnName: "vector",
+        columns: {
+            id: PrismaVectorStore.IdColumn,
+            content: PrismaVectorStore.ContentColumn,
+        },
+    }
+);
