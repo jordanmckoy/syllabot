@@ -22,13 +22,15 @@ export default function CourseView({ data }: { data: CourseWithUnits }) {
                 unitContent={unit?.content}
             />
 
-            <UnitPicker
-                setUnit={setUnit}
-                unit={unit}
-                units={data.Unit}
-                setModalState={setModalState}
-                modalState={modalState}
-            />
+            <div className="sticky w-fit">
+                <UnitPicker
+                    setUnit={setUnit}
+                    unit={unit}
+                    units={data.Unit}
+                    setModalState={setModalState}
+                    modalState={modalState}
+                />
+            </div>
         </div>
     )
 }

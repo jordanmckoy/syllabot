@@ -3,10 +3,14 @@ import { prisma } from "@/server/db";
 import Link from "next/link";
 
 export default async function Dashboard() {
-    const data = await prisma.course.findMany({});
+    const data = await prisma.course.findMany({
+        orderBy: {
+            name: "asc"
+        }
+    });
     return (
         <DashboardLayout>
-            <div className="flex flex-wrap gap-5 justify-center">
+            <div className="flex flex-wrap gap-5 mx-auto ">
                 {data?.map((course) => (
                     <Link key={course.id} href={`/dashboard/course/${course.id}`}>
                         <div className="card w-96 shadow-xl hover:bg-gray-100">
