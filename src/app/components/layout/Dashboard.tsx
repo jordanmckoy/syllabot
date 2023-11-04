@@ -4,6 +4,7 @@ import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useSession } from 'next-auth/react'
+import { redirect } from 'next/navigation'
 
 const navigation = [
     { name: 'Dashboard', href: '/', current: true },
@@ -24,7 +25,7 @@ function classNames(...classes: string[]) {
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const { data: session } = useSession()
 
-    if (!session) return null
+    if (!session) return redirect("/api/auth/signin");
 
     return (
         <>
