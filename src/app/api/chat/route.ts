@@ -1,12 +1,11 @@
 import { NextRequest } from 'next/server';
 import { Message as VercelChatMessage, StreamingTextResponse } from 'ai';
-
 import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { BytesOutputParser, StringOutputParser } from 'langchain/schema/output_parser';
 import { ChatPromptTemplate, HumanMessagePromptTemplate, PromptTemplate, SystemMessagePromptTemplate } from 'langchain/prompts';
 import { PrismaVectorStore } from 'langchain/vectorstores/prisma';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
-import { prisma } from '@/server/db';
+import { prisma } from '@/lib/db';
 import { Unit, Prisma } from '@prisma/client';
 import { env } from 'process';
 import { formatDocumentsAsString } from 'langchain/util/document';

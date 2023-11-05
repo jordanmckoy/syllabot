@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 
 import SessionProvider from "./components/context/SessionProvider";
 import DashboardLayout from "./components/layout/Dashboard";
+import { getServerAuthSession } from "@/lib/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +19,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession();
+  const session = await getServerAuthSession();
 
   return (
     <html lang="en">

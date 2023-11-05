@@ -1,12 +1,12 @@
 import { prisma } from "@/lib/db";
 import CourseView from "@/app/components/course/course";
-import { getServerSession } from "next-auth";
 import { Suspense } from "react";
 import Loading from "@/app/components/layout/Loading";
 import { redirect } from "next/navigation";
+import { getServerAuthSession } from "@/lib/auth";
 
 export default async function CoursePage({ params }: { params: { slug: string } }) {
-    const session = await getServerSession();
+    const session = await getServerAuthSession();
 
     if (!session) {
         redirect("/api/auth/signin");
