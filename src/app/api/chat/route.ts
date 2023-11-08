@@ -1,12 +1,11 @@
 import { NextRequest } from 'next/server';
 import { Message as VercelChatMessage, StreamingTextResponse } from 'ai';
-
 import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { BytesOutputParser, StringOutputParser } from 'langchain/schema/output_parser';
 import { ChatPromptTemplate, HumanMessagePromptTemplate, PromptTemplate, SystemMessagePromptTemplate } from 'langchain/prompts';
 import { PrismaVectorStore } from 'langchain/vectorstores/prisma';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
-import { prisma } from '@/server/db';
+import { prisma } from '@/lib/db';
 import { Unit, Prisma } from '@prisma/client';
 import { env } from 'process';
 import { formatDocumentsAsString } from 'langchain/util/document';
@@ -29,13 +28,15 @@ const vectorStore = PrismaVectorStore.withModel<Unit>(prisma).create(
     }
 );
 
-const retriever = vectorStore.asRetriever();
+const retriever = vectorStore.asRetriever(1);
 
-const SYSTEM_TEMPLATE = `Use the following pieces of context to answer the question at the end.
-If you don't know the answer, just say that you don't know, don't try to make up an answer.
+const SYSTEM_TEMPLATE = `
+Answer questions within the context of of the given context information. 
+Please stay within the specified topic and do not provide information about unrelated subjects. 
+Try to keep the output relatively short without sacrificing accuracy.
+
 ----------------
 {context}
-
 `;
 const messages = [
     SystemMessagePromptTemplate.fromTemplate(SYSTEM_TEMPLATE),

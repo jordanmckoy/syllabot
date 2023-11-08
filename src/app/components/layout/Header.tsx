@@ -12,6 +12,7 @@ import {
     XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
+import { signIn } from 'next-auth/react'
 
 const products = [
     { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
@@ -37,8 +38,8 @@ export default function Header() {
             <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
                     <a href="#" className="-m-1.5 p-1.5">
-                        <span className="sr-only">Your Company</span>
-                        <img className="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="" />
+                        <span className="sr-only">SyllaBot</span>
+                        <img className="h-8 w-auto" src="https://img.logoipsum.com/284.svg" alt="" />
                     </a>
                 </div>
                 <div className="flex lg:hidden">
@@ -114,7 +115,7 @@ export default function Header() {
                     </a>
                 </Popover.Group>
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-                    <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
+                    <a href="#" className="text-sm font-semibold leading-6 text-gray-900" onClick={() => signIn('discord')}>
                         Log in <span aria-hidden="true">&rarr;</span>
                     </a>
                 </div>
@@ -124,10 +125,10 @@ export default function Header() {
                 <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
                     <div className="flex items-center justify-between">
                         <a href="#" className="-m-1.5 p-1.5">
-                            <span className="sr-only">Your Company</span>
+                            <span className="sr-only">SyllaBot</span>
                             <img
                                 className="h-8 w-auto"
-                                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                                src="https://img.logoipsum.com/284.svg"
                                 alt=""
                             />
                         </a>
@@ -191,6 +192,7 @@ export default function Header() {
                                 <a
                                     href="#"
                                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                    onClick={() => signIn('discord')}
                                 >
                                     Log in
                                 </a>
