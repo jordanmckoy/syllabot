@@ -53,12 +53,26 @@ CREATE TABLE "VerificationToken" (
 );
 
 -- CreateTable
-CREATE TABLE "Document" (
+CREATE TABLE "Course" (
     "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "image" TEXT NOT NULL,
+
+    CONSTRAINT "Course_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Unit" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "courseId" TEXT NOT NULL,
     "content" TEXT NOT NULL,
+    "position" SERIAL NOT NULL,
     "vector" vector,
 
-    CONSTRAINT "Document_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Unit_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -87,3 +101,6 @@ ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_to_User" FOREIGN KEY ("user
 
 -- AddForeignKey
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_to_User" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Unit" ADD CONSTRAINT "Unit_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

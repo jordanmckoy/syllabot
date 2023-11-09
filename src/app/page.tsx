@@ -1,15 +1,8 @@
 import { Suspense } from "react";
 import Loading from "./components/layout/Loading";
-import { redirect } from "next/navigation";
 import { getServerAuthSession } from "@/lib/auth";
 
 export default async function Dashboard() {
-    const session = await getServerAuthSession();
-
-    if (!session) {
-        redirect("/api/auth/signin");
-    }
-
     return (
         <Suspense fallback={<Loading />}>
             <div className="overflow-x-auto">

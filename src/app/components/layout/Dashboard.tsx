@@ -3,7 +3,7 @@
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { useSession } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
 
 const navigation = [
@@ -11,7 +11,9 @@ const navigation = [
     { name: 'Course', href: '/course', current: false },
     { name: 'Projects', href: '#', current: false },
     { name: 'Reports', href: '#', current: false },
+    { name: 'Admin', href: '/admin', current: false }
 ]
+
 const userNavigation = [
     { name: 'Your Profile', href: '#' },
     { name: 'Settings', href: '#' },
@@ -20,6 +22,12 @@ const userNavigation = [
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
+}
+
+const handleItemClick = (navigationName: string) => {
+    if (navigationName === "Sign out") {
+        signOut()
+    }
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -98,6 +106,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                                                 {({ active }) => (
                                                                     <a
                                                                         href={item.href}
+                                                                        onClick={() => handleItemClick(item.name)}
                                                                         className={classNames(
                                                                             active ? 'bg-gray-100' : '',
                                                                             'block px-4 py-2 text-sm text-gray-700'
