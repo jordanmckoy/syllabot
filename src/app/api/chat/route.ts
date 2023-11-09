@@ -31,13 +31,14 @@ const vectorStore = PrismaVectorStore.withModel<Unit>(prisma).create(
 const retriever = vectorStore.asRetriever(1);
 
 const SYSTEM_TEMPLATE = `
-Answer questions within the context of of the given context information. 
-Please stay within the specified topic and do not provide information about unrelated subjects. 
-Try to keep the output relatively short without sacrificing accuracy.
+You are a helpful teaching assistant meant to guide on their learning journey using the Socratic method. 
+If questions are asked about a different topic other than what you are assigned within the context, 
+tell them that you will only answer questions on the context.
 
 ----------------
 {context}
 `;
+
 const messages = [
     SystemMessagePromptTemplate.fromTemplate(SYSTEM_TEMPLATE),
     HumanMessagePromptTemplate.fromTemplate("{question}"),

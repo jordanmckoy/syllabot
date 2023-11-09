@@ -148,24 +148,6 @@ const courseData = [
         image: 'https://random.imagecdn.app/500/150',
         teacherId: 'clorh407k0005atkanvcpj3we'
     },
-    {
-        name: 'Advanced Database',
-        description: `This course covers advanced database topics such as recovery, concurrency control, and distributed databases. It also covers the internals of database systems, including query processing and optimization, transaction processing, and storage strategies.`,
-        image: 'https://random.imagecdn.app/500/150',
-        teacherId: 'clorh407k0005atkanvcpj3we'
-    },
-    {
-        name: 'Advanced Database',
-        description: `This course covers advanced database topics such as recovery, concurrency control, and distributed databases. It also covers the internals of database systems, including query processing and optimization, transaction processing, and storage strategies.`,
-        image: 'https://random.imagecdn.app/500/150',
-        teacherId: 'clorh407k0005atkanvcpj3we'
-    },
-    {
-        name: 'Advanced Database',
-        description: `This course covers advanced database topics such as recovery, concurrency control, and distributed databases. It also covers the internals of database systems, including query processing and optimization, transaction processing, and storage strategies.`,
-        image: 'https://random.imagecdn.app/500/150',
-        teacherId: 'clorh407k0005atkanvcpj3we'
-    }
 ];
 
 async function seedCoursesAndUnits() {

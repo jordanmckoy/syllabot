@@ -1,6 +1,5 @@
 import { AcademicCapIcon } from '@heroicons/react/20/solid'
 import { Course, User } from '@prisma/client'
-import Image from "next/image"
 
 type Props = {
     user: User
