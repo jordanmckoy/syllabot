@@ -1,10 +1,9 @@
-"use client"
+'use client'
 
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { useSession } from 'next-auth/react'
-import { redirect } from 'next/navigation'
+import { auth, currentUser, RedirectToSignIn, UserButton } from "@clerk/nextjs";
 
 const navigation = [
     { name: 'Dashboard', href: '/', current: true },
@@ -12,20 +11,16 @@ const navigation = [
     { name: 'Projects', href: '#', current: false },
     { name: 'Reports', href: '#', current: false },
 ]
-const userNavigation = [
-    { name: 'Your Profile', href: '#' },
-    { name: 'Settings', href: '#' },
-    { name: 'Sign out', href: '#' },
-]
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-    const { data: session } = useSession()
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+    const { userId } = auth();
+    const user = await currentUser()
 
-    if (!session) return redirect("/api/auth/signin");
+    if (!userId || !user) return <RedirectToSignIn />
 
     return (
         <>
@@ -80,7 +75,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                                     <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                                                         <span className="absolute -inset-1.5" />
                                                         <span className="sr-only">Open user menu</span>
-                                                        {session.user?.image && (<img className="h-8 w-8 rounded-full" src={session.user.image} alt="" />)}
+                                                        {user.hasImage && (<img className="h-8 w-8 rounded-full" src={user.imageUrl} alt="" />)}
                                                     </Menu.Button>
                                                 </div>
                                                 <Transition
@@ -93,21 +88,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                                     leaveTo="transform opacity-0 scale-95"
                                                 >
                                                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                                        {userNavigation.map((item) => (
-                                                            <Menu.Item key={item.name}>
-                                                                {({ active }) => (
-                                                                    <a
-                                                                        href={item.href}
-                                                                        className={classNames(
-                                                                            active ? 'bg-gray-100' : '',
-                                                                            'block px-4 py-2 text-sm text-gray-700'
-                                                                        )}
-                                                                    >
-                                                                        {item.name}
-                                                                    </a>
-                                                                )}
-                                                            </Menu.Item>
-                                                        ))}
+                                                        <UserButton afterSignOutUrl="/" />
                                                     </Menu.Items>
                                                 </Transition>
                                             </Menu>
@@ -148,11 +129,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 <div className="border-t border-gray-700 pb-3 pt-4">
                                     <div className="flex items-center px-5">
                                         <div className="flex-shrink-0">
-                                            {session.user?.image && (<img className="h-10 w-10 rounded-full" src={session.user.image} alt="" />)}
+                                            {user.hasImage && (<img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />)}
                                         </div>
                                         <div className="ml-3">
-                                            {session.user?.name && (<div className="text-base font-medium leading-none text-white">{session.user.name}</div>)}
-                                            {session.user?.email && (<div className="text-sm font-medium leading-none text-gray-400">{session.user.email}</div>)}
+                                            <div className="text-base font-medium leading-none text-white">{user.firstName} {user.lastName}</div>
+                                            <div className="text-sm font-medium leading-none text-gray-400">{user.username}</div>
                                         </div>
                                         <button
                                             type="button"
@@ -164,16 +145,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                         </button>
                                     </div>
                                     <div className="mt-3 space-y-1 px-2">
-                                        {userNavigation.map((item) => (
-                                            <Disclosure.Button
-                                                key={item.name}
-                                                as="a"
-                                                href={item.href}
-                                                className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                                            >
-                                                {item.name}
-                                            </Disclosure.Button>
-                                        ))}
+                                        <UserButton afterSignOutUrl="/" />
                                     </div>
                                 </div>
                             </Disclosure.Panel>
