@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import Loading from "./components/layout/Loading";
+import Loading from "../components/layout/Loading";
 import { getServerAuthSession } from "@/lib/auth";
 
 export default async function Dashboard() {

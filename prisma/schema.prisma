@@ -37,15 +37,18 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  password      String?
-  image         String?
-  role          UserRole  @default(USER)
-  accounts      Account[]
-  sessions      Session[]
+  id                 String               @id @default(cuid())
+  name               String?
+  email              String?              @unique
+  emailVerified      DateTime?
+  password           String?
+  image              String?
+  role               UserRole             @default(USER)
+  accounts           Account[]
+  sessions           Session[]
+  UserCourseProgress UserCourseProgress[]
+  Enrollment         Enrollment[]
+  Course             Course[]
 }
 
 model VerificationToken {
@@ -56,12 +59,31 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model UserCourseProgress {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String
+  unitId    String
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+  unit      Unit     @relation(fields: [unitId], references: [id])
+
+  @@unique([userId, courseId, unitId], name: "UserCourseProgress_userCourseUnit_unique")
+}
+
 model Course {
-  id          String @id @default(cuid())
+  id          String               @id @default(cuid())
   name        String
   description String
   image       String
+  teacherId   String
   Unit        Unit[]
+  progress    UserCourseProgress[]
+  Enrollment  Enrollment[]
+  teacher     User                 @relation(fields: [teacherId], references: [id])
 }
 
 model Unit {
@@ -73,6 +95,19 @@ model Unit {
   position    Int                    @default(autoincrement())
   vector      Unsupported("vector")?
   course      Course                 @relation(fields: [courseId], references: [id])
+  progress    UserCourseProgress[] // Add this field to track user progress in the unit
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId], name: "Enrollment_userCourse_unique")
 }
 
 enum UserRole {

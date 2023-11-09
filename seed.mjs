@@ -146,21 +146,25 @@ const courseData = [
         name: 'Advanced Database',
         description: `This course covers advanced database topics such as recovery, concurrency control, and distributed databases. It also covers the internals of database systems, including query processing and optimization, transaction processing, and storage strategies.`,
         image: 'https://random.imagecdn.app/500/150',
+        teacherId: 'clorh407k0005atkanvcpj3we'
     },
     {
         name: 'Advanced Database',
         description: `This course covers advanced database topics such as recovery, concurrency control, and distributed databases. It also covers the internals of database systems, including query processing and optimization, transaction processing, and storage strategies.`,
         image: 'https://random.imagecdn.app/500/150',
+        teacherId: 'clorh407k0005atkanvcpj3we'
     },
     {
         name: 'Advanced Database',
         description: `This course covers advanced database topics such as recovery, concurrency control, and distributed databases. It also covers the internals of database systems, including query processing and optimization, transaction processing, and storage strategies.`,
         image: 'https://random.imagecdn.app/500/150',
+        teacherId: 'clorh407k0005atkanvcpj3we'
     },
     {
         name: 'Advanced Database',
         description: `This course covers advanced database topics such as recovery, concurrency control, and distributed databases. It also covers the internals of database systems, including query processing and optimization, transaction processing, and storage strategies.`,
         image: 'https://random.imagecdn.app/500/150',
+        teacherId: 'clorh407k0005atkanvcpj3we'
     }
 ];
 
@@ -193,11 +197,23 @@ async function seedCoursesAndUnits() {
         return Promise.all(units);
     }));
 
+    courses.map(async (course) => {
+        await prisma.enrollment.create(
+            {
+                data: {
+                    userId: "clorh3muj0000atkauvk0581k",
+                    courseId: course.id
+                }
+            }
+        )
+    })
+
     await vectorStore.addModels(units.flat());
 }
 
 async function main() {
     try {
+        await prisma.enrollment.deleteMany();
         await prisma.unit.deleteMany();
         await prisma.course.deleteMany();
         await seedCoursesAndUnits();

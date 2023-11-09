@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
-import CourseView from "@/app/components/course/course";
+import CourseView from "@/components/course/course";
 import { Suspense } from "react";
-import Loading from "@/app/components/layout/Loading";
+import Loading from "@/components/layout/Loading";
 import { redirect } from "next/navigation";
 import { getServerAuthSession } from "@/lib/auth";
 
