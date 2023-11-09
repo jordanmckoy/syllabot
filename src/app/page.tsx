@@ -1,10 +1,12 @@
 import { Suspense } from "react";
 import Loading from "./components/layout/Loading";
+import { UserButton } from "@clerk/nextjs";
 
 export default async function Dashboard() {
     return (
         <Suspense fallback={<Loading />}>
             <div className="overflow-x-auto">
+
                 <table className="table table-zebra">
                     {/* head */}
                     <thead>

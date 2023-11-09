@@ -7,6 +7,8 @@ import {
   SignedIn,
   SignedOut,
   RedirectToSignIn,
+  SignInButton,
+  UserButton,
 } from "@clerk/nextjs";
 
 const inter = Inter({ subsets: ["latin"] });
