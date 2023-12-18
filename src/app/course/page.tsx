@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { Suspense } from "react";
+<<<<<<< HEAD
 import Loading from "../../components/layout/Loading";
 import { getServerAuthSession } from "@/lib/auth";
 
@@ -15,6 +16,16 @@ export default async function Dashboard() {
             course: true
         },
     })
+=======
+import Loading from "../components/layout/Loading";
+
+export default async function Dashboard() {
+    const data = await prisma.course.findMany({
+        orderBy: {
+            name: "asc"
+        }
+    });
+>>>>>>> main
     return (
         <Suspense fallback={<Loading />}>
             <div className="flex flex-wrap gap-5 mx-auto ">

@@ -15,6 +15,7 @@ export default function CourseView({ data }: { data: CourseWithUnits }) {
 
     return (
         <div className="flex p-6">
+
             <Content
                 courseName={data.name}
                 courseDescription={data.description}

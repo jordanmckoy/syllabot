@@ -1,11 +1,17 @@
 import { Suspense } from "react";
+<<<<<<< HEAD
 import Loading from "../components/layout/Loading";
 import { getServerAuthSession } from "@/lib/auth";
+=======
+import Loading from "./components/layout/Loading";
+import { UserButton } from "@clerk/nextjs";
+>>>>>>> main
 
 export default async function Dashboard() {
     return (
         <Suspense fallback={<Loading />}>
             <div className="overflow-x-auto">
+
                 <table className="table table-zebra">
                     {/* head */}
                     <thead>

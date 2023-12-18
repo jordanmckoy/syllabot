@@ -1,10 +1,13 @@
-"use client"
-
+'use client'
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+<<<<<<< HEAD:src/components/layout/Dashboard.tsx
 import { signOut, useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
+=======
+import { auth, currentUser, RedirectToSignIn, UserButton } from "@clerk/nextjs";
+>>>>>>> main:src/app/components/layout/Dashboard.tsx
 
 const navigation = [
     { name: 'Dashboard', href: '/', current: true },
@@ -13,17 +16,21 @@ const navigation = [
     { name: 'Reports', href: '#', current: false },
     { name: 'Admin', href: '/admin', current: false }
 ]
+<<<<<<< HEAD:src/components/layout/Dashboard.tsx
 
 const userNavigation = [
     { name: 'Your Profile', href: '#' },
     { name: 'Settings', href: '#' },
     { name: 'Sign out', href: '#' },
 ]
+=======
+>>>>>>> main:src/app/components/layout/Dashboard.tsx
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
 }
 
+<<<<<<< HEAD:src/components/layout/Dashboard.tsx
 const handleItemClick = (navigationName: string) => {
     if (navigationName === "Sign out") {
         signOut()
@@ -32,8 +39,13 @@ const handleItemClick = (navigationName: string) => {
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const { data: session } = useSession()
+=======
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+    const { userId } = auth();
+    const user = await currentUser()
+>>>>>>> main:src/app/components/layout/Dashboard.tsx
 
-    if (!session) return redirect("/api/auth/signin");
+    if (!userId || !user) return <RedirectToSignIn />
 
     return (
         <>
@@ -81,14 +93,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                                 <span className="sr-only">View notifications</span>
                                                 <BellIcon className="h-6 w-6" aria-hidden="true" />
                                             </button>
+                                            <p>Shows this UI Is Rendering</p>
+                                            <UserButton afterSignOutUrl="/" />
 
                                             {/* Profile dropdown */}
-                                            <Menu as="div" className="relative ml-3">
+                                            {/* <Menu as="div" className="relative ml-3">
                                                 <div>
                                                     <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                                                         <span className="absolute -inset-1.5" />
                                                         <span className="sr-only">Open user menu</span>
-                                                        {session.user?.image && (<img className="h-8 w-8 rounded-full" src={session.user.image} alt="" />)}
+                                                        {user.hasImage && (<img className="h-8 w-8 rounded-full" src={user.imageUrl} alt="" />)}
                                                     </Menu.Button>
                                                 </div>
                                                 <Transition
@@ -101,6 +115,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                                     leaveTo="transform opacity-0 scale-95"
                                                 >
                                                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+<<<<<<< HEAD:src/components/layout/Dashboard.tsx
                                                         {userNavigation.map((item) => (
                                                             <Menu.Item key={item.name}>
                                                                 {({ active }) => (
@@ -117,9 +132,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                                                 )}
                                                             </Menu.Item>
                                                         ))}
+=======
+
+>>>>>>> main:src/app/components/layout/Dashboard.tsx
                                                     </Menu.Items>
                                                 </Transition>
-                                            </Menu>
+                                            </Menu> */}
                                         </div>
                                     </div>
                                     <div className="-mr-2 flex md:hidden">
@@ -157,11 +175,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 <div className="border-t border-gray-700 pb-3 pt-4">
                                     <div className="flex items-center px-5">
                                         <div className="flex-shrink-0">
-                                            {session.user?.image && (<img className="h-10 w-10 rounded-full" src={session.user.image} alt="" />)}
+                                            {user.hasImage && (<img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />)}
                                         </div>
                                         <div className="ml-3">
-                                            {session.user?.name && (<div className="text-base font-medium leading-none text-white">{session.user.name}</div>)}
-                                            {session.user?.email && (<div className="text-sm font-medium leading-none text-gray-400">{session.user.email}</div>)}
+                                            <div className="text-base font-medium leading-none text-white">{user.firstName} {user.lastName}</div>
+                                            <div className="text-sm font-medium leading-none text-gray-400">{user.username}</div>
                                         </div>
                                         <button
                                             type="button"
@@ -173,16 +191,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                         </button>
                                     </div>
                                     <div className="mt-3 space-y-1 px-2">
-                                        {userNavigation.map((item) => (
-                                            <Disclosure.Button
-                                                key={item.name}
-                                                as="a"
-                                                href={item.href}
-                                                className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                                            >
-                                                {item.name}
-                                            </Disclosure.Button>
-                                        ))}
+                                        <UserButton afterSignOutUrl="/" />
                                     </div>
                                 </div>
                             </Disclosure.Panel>
