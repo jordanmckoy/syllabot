@@ -39,7 +39,7 @@ export default function Header() {
                 <div className="flex lg:flex-1">
                     <a href="#" className="-m-1.5 p-1.5">
                         <span className="sr-only">SyllaBot</span>
-                        <img className="h-8 w-auto" src="https://img.logoipsum.com/284.svg" alt="" />
+                        <img className="h-8 w-auto" src="https://img.logoipsum.com/224.svg" alt="" />
                     </a>
                 </div>
                 <div className="flex lg:hidden">
@@ -128,7 +128,7 @@ export default function Header() {
                             <span className="sr-only">SyllaBot</span>
                             <img
                                 className="h-8 w-auto"
-                                src="https://img.logoipsum.com/284.svg"
+                                src="https://img.logoipsum.com/224.svg"
                                 alt=""
                             />
                         </a>

@@ -47,7 +47,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                         <div className="flex-shrink-0">
                                             <img
                                                 className="h-8 w-8"
-                                                src="https://img.logoipsum.com/284.svg"
+                                                src="https://img.logoipsum.com/224.svg"
                                                 alt="SyllaBot"
                                             />
                                         </div>

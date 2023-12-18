@@ -146,7 +146,7 @@ const courseData = [
         name: 'Advanced Database',
         description: `This course covers advanced database topics such as recovery, concurrency control, and distributed databases. It also covers the internals of database systems, including query processing and optimization, transaction processing, and storage strategies.`,
         image: 'https://random.imagecdn.app/500/150',
-        teacherId: 'clorh407k0005atkanvcpj3we'
+        teacherId: 'clq15wvkn0000g0iu9njfg6z0'
     },
 ];
 
@@ -183,7 +183,7 @@ async function seedCoursesAndUnits() {
         await prisma.enrollment.create(
             {
                 data: {
-                    userId: "clorh3muj0000atkauvk0581k",
+                    userId: "clq15ycyc0005g0iuxv7fka8d",
                     courseId: course.id
                 }
             }
